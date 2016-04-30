@@ -1,0 +1,143 @@
+<script src="/assets/plugin/jquery-validation/jquery.validate.min.js"></script>
+<script src="/assets/plugin/jquery-validation/validate-custom.js"></script>
+
+<div class="content" id="content">
+    <div class="ui masthead">
+        <div class="ui container">
+            <h1 class="ui header" id="contentHeader"></h1>
+        </div>
+    </div>
+    <div class="main ui container">
+        <div class="ui form">
+            <form id="roleForm">
+                <input type="hidden" name="id" value="$!role.id" class="ignore" />
+                <div class="two fields">
+                    <div class="field required">
+                        <label>所属应用</label>
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="appId" />
+                            <i class="dropdown icon"></i>
+                            <div class="default text">请选择应用</div>
+                            <div class="menu">
+                                #foreach( $app in $apps)
+                                    <div class="item" data-value="$app.id">$app.name</div>
+                                #end
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>父权限</label>
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="parentId" />
+                            <i class="dropdown icon"></i>
+                            <div class="default text"></div>
+                            <div class="menu">
+                                #foreach( $role in $roles)
+                                    <div class="item" data-value="$role.id">$role.name</div>
+                                #end
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="field required">
+                        <label>角色名称</label>
+                        <input type="text" placeholder="角色名称" name="name" value="$!role.name" />
+                    </div>
+                    <div class="field required">
+                        <label>状态</label>
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="status" value="$roleStatus[0].code" />
+                            <i class="dropdown icon"></i>
+                            <div class="default text"></div>
+                            <div class="menu">
+                                #foreach( $status in $roleStatus)
+                                    <div class="item" data-value="$status.code">$status.name</div>
+                                #end
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui blue submit button" id="saveBtn">保存</div>
+                <div class="ui button" id="backBtn">返回</div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    var id = '$!role.id';
+    var title = id ? '角色编辑' : '角色添加';
+    $('#contentHeader').text(title);
+    document.title = title;
+    !id || $('[name="status"]').val('$!role.status');
+    !id || $('[name="appId"]').val('$!role.appId');
+    !id || $('[name="parentId"]').val('$!role.parentId');
+
+    $('.ui.dropdown').dropdown({
+        onChange: function(value, text, $selectedItem) {
+            roleValidate.element($(this).find(':input'));
+        }
+    });
+
+    var roleValidate = $('#roleForm').validate({
+        ignore: '.ignore',
+        rules: {
+            appId: {
+                required: true
+            },
+            name: {
+                required: true,
+                maxlength: 50,
+                checkAppNameUnique: id
+            }
+        },
+        messages: {
+            appId: {
+                required: "请选择所属应用"
+            },
+            name: {
+                required: "角色名称不能为空！",
+                maxlength: "角色名称长度不能超过50！"
+            }
+        }
+    });
+
+    $('#saveBtn').on('click', function() {
+        var saveBtn = $(this);
+        if (!roleValidate.form($('#roleForm')) || saveBtn.hasClass('loading')) {
+            return;
+        }
+        saveBtn.addClass('loading');
+        var param = [];
+        $.each($(':input'), function() {
+            var input = $(this);
+            input.val($.trim(input.val()));
+            param.push({'name': input.attr('name'), 'value': input.val()});
+        });
+        $.ajax({
+            url: id ? '/role/update.json' : '/role/insert.json',
+            data: param,
+            dataType: 'json',
+            success: function(res) {
+                if (res.status == 200) {
+                    toastr.success('保存成功！');
+                    if (!id) {
+                        $('#roleForm')[0].reset();
+                        $('.ui.dropdown').dropdown('restore defaults');
+                    }
+                } else {
+                    toastr.error('保存失败！');
+                }
+            },
+            complete: function() {
+                saveBtn.removeClass('loading');
+            }
+        });
+    });
+
+    $('#backBtn').on('click', function() {
+        location.href = '/role/list.htm';
+    })
+
+</script>

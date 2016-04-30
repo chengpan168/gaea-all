@@ -1,0 +1,97 @@
+
+<script src="/assets/plugin/laypage/laypage.js"></script>
+<title>应用列表</title>
+<div class="content">
+    <div class="ui masthead">
+        <div class="ui container">
+            <h1 class="ui header"> 应用列表 </h1>
+        </div>
+    </div>
+    <div class="main ui container">
+        <div class="ui form">
+            <div class="inline fields">
+                <label>姓名</label>
+                <div class="field">
+                    <input type="text" id="name" />
+                </div>
+                <div class="field">
+                    <button class="ui icon button" id="searchBtn"><i class="icon search"></i> 查询</button>
+                    <button class="ui primary icon button" id="toAddBtn"><i class="icon plus"></i> 添加应用</button>
+                </div>
+
+            </div>
+        </div>
+        <table class="ui compact table" id="appTable">
+            <thead>
+            <tr>
+                <th>名称</th>
+                <th>应用URL</th>
+                <th>KEY</th>
+                <th>负责人</th>
+                <th>描述</th>
+                <th>状态</th>
+                <th class="center aligned">操作</th>
+            </tr>
+            <tbody>
+            </tbody>
+            </thead>
+        </table>
+        <div class="ui grid" id="appPage">
+        </div>
+    </div>
+</div>
+<script>
+
+    function refreshPage(currentPage) {
+        $.getJSON('/app/list.json', {
+            currentPage: currentPage || 1,
+            pageSize: 10,
+            name: $.trim($('#name').val())
+        }, function(res){
+            var data = res.data;
+            $('#userPageDesc').text(''.format())
+            var html = '';
+            var template = '<tr class="{classStatus}"><td>{name}</td><td>{appUrl}</td><td>{appKey}</td><td>{ownerName}</td><td>{description}</td><td>{statusName}</td>' +
+                    '<td class="center aligned"><button class="ui mini button" name="editBtn" data-url="/app/edit.htm?id={id}">编辑</button></td></tr>';
+            $.each(data.data, function() {
+                var app = this;
+                app.ownerName = app.ownerName || '-';
+                app.description = app.description || '-';
+                app.classStatus = app.status == 'enabled' ? '' : 'warning';
+                html += template.format(app);
+            });
+            $('#appTable tbody').html(html);
+            //显示分页
+            laypage({
+                cont: 'appPage', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+                pages: data.totalPage, //通过后台拿到的总页数
+                pageSize: data.pageSize,
+                totalCount: data.totalCount,
+                curr: currentPage || 1, //当前页
+                jump: function(obj, first){ //触发分页后的回调
+                    if(!first){
+                        refreshPage(obj.curr);
+                    }
+                }
+            });
+        });
+    }
+    refreshPage();
+    $('#searchBtn').on('click', function() {
+        refreshPage();
+    });
+
+    $(document).on('click', '[name="editBtn"]', function() {
+        location.href = $(this).attr('data-url');
+    }).on('keypress', function(e) {
+        if(e.which == 13) {
+            refreshPage();
+        }
+    });
+
+    $('#toAddBtn').on('click', function() {
+        location.href = '/app/add.htm'
+    })
+
+
+</script>

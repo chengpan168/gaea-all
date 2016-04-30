@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <group>
+        <property name="log.root" defaultValue="/work/logs/h5" desc="日志根目录"/>
+
+    </group>
+
+    <script>
+        <generate template="/WEB-INF/classes/logback.xml" charset="UTF-8" outputCharset="UTF-8"/>
+    </script>
+</config>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <bean id="userService" class="com.gaea.service.impl.UserServiceImpl"/>
+
+    <bean id="authentication" class="com.gaea.service.helper.Authentication">
+        <property name="authUrl" value="${auth.url}" />
+        <property name="appId" value="${auth.appid}" />
+        <property name="appSecret" value="${auth.appsecret}" />
+        <property name="modifyPassUrl" value="${modify.url}" />
+        <property name="privilegeUrl" value="${privilege.url}" />
+        <property name="privilegeRegId" value="${privilege.register.id}" />
+        <property name="areaPrivilegeUrl" value="${area.privilege.url}" />
+        <property name="shopPrivilegeUrl" value="${shop.privilege.url}" />
+    </bean>
+
+    <bean id="appService" class="com.gaea.service.impl.AppServiceImpl"/>
+    <bean id="roleService" class="com.gaea.service.impl.RoleServiceImpl"/>
+    <bean id="permissionService" class="com.gaea.service.impl.PermissionServiceImpl"/>
+    <bean id="urlService" class="com.gaea.service.impl.UrlServiceImpl"/>
+
+    <bean id="sessionService" class="com.gaea.service.impl.SessionServiceImpl"/>
+
+</beans>

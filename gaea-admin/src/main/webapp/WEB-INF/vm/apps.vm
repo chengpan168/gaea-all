@@ -1,0 +1,22 @@
+<div class="content">
+    <div class="ui masthead">
+        <div class="ui container">
+            <h1 class="ui header"> 应用列表 </h1>
+        </div>
+    </div>
+    <div class="main ui container">
+
+        <div class="ui cards">
+            #foreach( $app in $apps)
+                <div class="card">
+                    <div class="content">
+                        <div class="header">$!{app.name}</div>
+                        <div class="meta">描述: $!{app.description}</div>
+                        <div class="description">链接: <a href="$!{app.appUrl}">应用首页</a></div>
+                        <div class="description"><strong>key: </strong>$!{app.appKey}</div>
+                    </div>
+                </div>
+            #end
+        </div>
+    </div>
+</div>

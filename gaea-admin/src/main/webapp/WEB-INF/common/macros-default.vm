@@ -1,0 +1,3 @@
+#macro(strong  $userName)
+<strong>$userName</strong>
+#end

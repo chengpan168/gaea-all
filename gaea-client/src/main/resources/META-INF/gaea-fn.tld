@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://java.sun.com/xml/ns/j2ee"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+
+    <description>gaea权限 标签</description>
+    <display-name>gaea-fn</display-name>
+    <tlib-version>1.1</tlib-version>
+    <short-name>gaea</short-name>
+    <uri>http://gaea.com/tags/gaea-fn</uri>
+
+    <function>
+        <description>
+            has role
+        </description>
+        <name>hasRole</name>
+        <function-class>com.gaea.client.GaeaUtils</function-class>
+        <function-signature>boolean hasRole(java.lang.String)</function-signature>
+    </function>
+    <function>
+        <description>
+            has roles
+        </description>
+        <name>hasRoles</name>
+        <function-class>com.gaea.client.GaeaUtils</function-class>
+        <function-signature>boolean[] hasRoles(java.util.List)</function-signature>
+    </function>
+    <function>
+        <description>
+            has all roles
+        </description>
+        <name>hasAllRoles</name>
+        <function-class>com.gaea.client.GaeaUtils</function-class>
+        <function-signature>boolean hasAllRoles(java.util.Collection)</function-signature>
+    </function>
+    <function>
+        <description>
+            has permission
+        </description>
+        <name>isPermitted</name>
+        <function-class>com.gaea.client.GaeaUtils</function-class>
+        <function-signature>boolean isPermitted(java.lang.String)</function-signature>
+    </function>
+    <function>
+        <description>
+            has permission
+        </description>
+        <name>isPermittedAll</name>
+        <function-class>com.gaea.client.GaeaUtils</function-class>
+        <function-signature>boolean isPermittedAll(java.lang.String...)</function-signature>
+    </function>
+</taglib>

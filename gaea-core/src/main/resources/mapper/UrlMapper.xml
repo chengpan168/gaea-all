@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gaea.mapper.UrlMapper">
+    <resultMap id="BaseResultMap" type="com.gaea.entity.Url">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="app_id" property="appId" jdbcType="BIGINT"/>
+        <result column="creator_id" property="creatorId" jdbcType="BIGINT"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="UrlDto" type="com.gaea.dto.UrlDto" extends="BaseResultMap">
+        <result column="app_name" property="appName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, url, app_id, creator_id, status, description, create_time, modify_time
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from url
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from url
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.gaea.entity.Url">
+    insert into url (id, url, app_id, 
+      creator_id, status, description, create_time,
+      modify_time)
+    values (#{id,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, #{appId,jdbcType=BIGINT}, 
+      #{creatorId,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.gaea.entity.Url">
+        insert into url
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="appId != null">
+                app_id,
+            </if>
+            <if test="creatorId != null">
+                creator_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="appId != null">
+                #{appId,jdbcType=BIGINT},
+            </if>
+            <if test="creatorId != null">
+                #{creatorId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.gaea.entity.Url">
+        update url
+        <set>
+            <if test="url != null">
+                url = #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="appId != null">
+                app_id = #{appId,jdbcType=BIGINT},
+            </if>
+            <if test="creatorId != null">
+                creator_id = #{creatorId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.gaea.entity.Url">
+        update url
+        set url = #{url,jdbcType=VARCHAR},
+          app_id = #{appId,jdbcType=BIGINT},
+          creator_id = #{creatorId,jdbcType=BIGINT},
+          status = #{status,jdbcType=VARCHAR},
+          description = #{description,jdbcType=VARCHAR},
+          create_time = #{createTime,jdbcType=TIMESTAMP},
+          modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="listByStaffId" resultType="string">
+        select  DISTINCT(u.url)
+        from url u
+        left join role_url ru on u.id = ru.url_id
+        where
+        u.status = 'enabled'
+        and u.app_id = (
+        select id from app where name = #{appName, jdbcType=VARCHAR}
+        )
+        and ru.role_id in (
+            select r2.id
+                from user_role ur
+                left join role r1 on ur.role_id = r1.id
+                left join role r2 on r1.id = r2.id or r2.path like concat('%/', r1.id ,'/%')
+            where ur.staff_id = #{staffId,jdbcType=BIGINT}
+                and r2.status = 'enabled'
+                and r1.app_id = (
+                    select id from app where name = #{appName, jdbcType=VARCHAR}
+                )
+        )
+    </select>
+
+    <select id="listByPage" resultMap="UrlDto">
+        <include refid="Page.header" />
+        select u.id, u.url, u.app_id, a.name as app_name,
+        u.modify_time, u.create_time
+        from url u
+        left join app a on u.app_id = a.id
+        where 1=1
+        <if test="appId != null and appId !=''">
+            and u.app_id = #{appId}
+        </if>
+        order by u.id desc
+        <include refid="Page.footer" />
+    </select>
+
+    <select id="countByPage" resultType="int">
+        select count(1)
+        from url u
+        where 1=1
+        <if test="appId != null and appId !=''">
+            and u.app_id = #{appId}
+        </if>
+    </select>
+</mapper>

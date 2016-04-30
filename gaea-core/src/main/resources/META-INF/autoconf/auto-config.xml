@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <group>
+        <property name="jdbc.url" defaultValue="jdbc:mysql://rds6w9687n3q6h6l946wpublic.mysql.rds.aliyuncs.com:3306/titan" description=""/>
+        <property name="jdbc.username" defaultValue="yellowstone" description=""/>
+        <property name="jdbc.password" defaultValue="yellowstone123456" description=""/>
+
+        <property name="redis.ip" defaultValue="23.40.157.166" description=""/>
+        <property name="redis.ip" defaultValue="23.40.157.166" description=""/>
+        <property name="redis.port" defaultValue="6379" description=""/>
+        <property name="redis.pool.maxActive" defaultValue="10" description=""/>
+        <property name="redis.pool.maxIdle" defaultValue="2" description=""/>
+        <property name="redis.pool.maxWait" defaultValue="2" description=""/>
+        <property name="redis.pool.testOnBorrow" defaultValue="false" description=""/>
+
+        <!--C#接口-->
+        <property name="auth.url" defaultValue="http://192.168.18.98/certapi/login" description=""/>
+        <property name="auth.appid" defaultValue="vynlpve8l9wjts9a" description=""/>
+        <property name="auth.appsecret" defaultValue="06cbf4d45aab4dd4830263d60d48ba9c" description=""/>
+
+        <property name="modify.url" defaultValue="http://192.168.18.98/certapi/modifyPass" description=""/>
+        <property name="privilege.url" defaultValue="http://192.168.18.98/certapi/retrieveSysPrivilege" description=""/>
+        <property name="privilege.register.id" defaultValue="dyd-report" description=""/>
+        <property name="area.privilege.url" defaultValue="http://192.168.18.98/certapi/retrieveAreaPrivilege" description=""/>
+        <property name="shop.privilege.url" defaultValue="http://192.168.18.98/certapi/retrieveShopPrivilege" description=""/>
+
+    </group>
+    <script>
+        <generate template="conf/jdbc.properties" charset="UTF-8" outputCharset="UTF-8"/>
+        <generate template="spring/spring-core-service.xml" charset="UTF-8" outputCharset="UTF-8"/>
+        <generate template="spring/spring-core-redis.xml" charset="UTF-8" outputCharset="UTF-8"/>
+    </script>
+</config>

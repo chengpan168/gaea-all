@@ -1,0 +1,150 @@
+<script src="/assets/plugin/jquery-validation/jquery.validate.min.js"></script>
+<script src="/assets/plugin/jquery-validation/validate-custom.js"></script>
+
+<div class="content" id="content">
+    <div class="ui masthead">
+        <div class="ui container">
+            <h1 class="ui header" id="contentHeader"></h1>
+        </div>
+    </div>
+    <div class="main ui container">
+        <div class="ui form">
+            <form id="appForm">
+                <input type="hidden" name="id" value="$!app.id" class="ignore" />
+                <div class="two fields">
+                    <div class="field required">
+                        <label>应用名称</label>
+                        <input type="text" placeholder="应用名称" name="name" value="$!app.name" />
+                    </div>
+                    <div class="field required">
+                        <label>状态</label>
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="status" value="$appStatus[0].code" />
+                            <i class="dropdown icon"></i>
+                            <div class="default text"></div>
+                            <div class="menu">
+                                #foreach( $status in $appStatus)
+                                    <div class="item" data-value="$status.code">$status.name</div>
+                                #end
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="field required">
+                        <label>URL</label>
+                        <input type="text" placeholder="首页URL" name="appUrl" value="$!app.appUrl" />
+                    </div>
+                    <div class="field required">
+                        <label>负责人</label>
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="ownerId" />
+                            <i class="dropdown icon"></i>
+                            <div class="default text">请选择</div>
+                            <div class="menu">
+                                #foreach( $user in $users)
+                                    <div class="item" data-value="$user.id">$user.name - $user.staffId</div>
+                                #end
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>描述</label>
+                    <input type="text" placeholder="描述" name="description" value="$!app.description" />
+                </div>
+                <div class="ui blue submit button" id="saveBtn">保存</div>
+                <div class="ui button" id="backBtn">返回</div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    var id = '$!app.id';
+    var title = id ? '应用编辑' : '应用添加';
+    $('#contentHeader').text(title);
+    document.title = title;
+    !id || $('[name="ownerId"]').val('$!app.ownerId');
+    !id || $('[name="status"]').val('$!app.status');
+
+    $('.ui.dropdown').dropdown({
+        onChange: function(value, text, $selectedItem) {
+            appValidate.element($(this).find(':input'));
+        }
+    });
+
+    var appValidate = $('#appForm').validate({
+        ignore: '.ignore',
+        rules: {
+            ownerId: {
+                required: true
+            },
+            name: {
+                required: true,
+                maxlength: 50,
+                checkAppNameUnique: id
+            },
+            appUrl: {
+                required: true,
+                maxlength: 100
+            },
+            description: {
+                maxlength: 100
+            }
+        },
+        messages: {
+            ownerId: {
+                required: "请选择负责人！"
+            },
+            name: {
+                required: "应用名称不能为空！",
+                maxlength: "应用名称长度不能超过50！"
+            },
+            appUrl: {
+                required: "URL不能为空！",
+                maxlength: "URL长度不能超过100！"
+            },
+            description: {
+                maxlength: "描述长度不能超过100！"
+            }
+        }
+    });
+
+    $('#saveBtn').on('click', function() {
+        var saveBtn = $(this);
+        if (!appValidate.form($('#appForm')) || saveBtn.hasClass('loading')) {
+            return;
+        }
+        saveBtn.addClass('loading');
+        var param = [];
+        $.each($(':input'), function() {
+            var input = $(this);
+            input.val($.trim(input.val()));
+            param.push({'name': input.attr('name'), 'value': input.val()});
+        });
+        $.ajax({
+            url: id ? '/app/update.json' : '/app/insert.json',
+            data: param,
+            dataType: 'json',
+            success: function(res) {
+                if (res.status == 200) {
+                    toastr.success('保存成功！');
+                    if (!id) {
+                        $('#appForm')[0].reset();
+                        $('.ui.dropdown').dropdown('restore defaults');
+                    }
+                } else {
+                    toastr.error('保存失败！');
+                }
+            },
+            complete: function() {
+                saveBtn.removeClass('loading');
+            }
+        });
+    });
+
+    $('#backBtn').on('click', function() {
+        location.href = '/app/list.htm';
+    })
+
+</script>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <title>$title</title>
+    <link href="/assets/style.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/plugin/semantic/semantic.min.css">
+    <link rel="stylesheet" href="/assets/style.css">
+
+    <script src="/assets/jquery.js"></script>
+    <script src="/assets/plugin/semantic/semantic.min.js"></script>
+
+    <script src="/assets/common.js"></script>
+
+    <link rel="stylesheet" href="/assets/plugin/toastr/toastr.min.css" />
+    <script src="/assets/plugin/toastr/toastr.min.js"></script>
+
+    #parse ("/WEB-INF/common/common.vm")
+</head>
+
+<body>
+    <div class="full height">
+        #parse ("/WEB-INF/common/header.vm")
+        $body
+        #parse ("/WEB-INF/common/footer.vm")
+    </div>
+</body>
+
+</html>
+

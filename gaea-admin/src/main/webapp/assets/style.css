@@ -1,0 +1,57 @@
+.full.height {
+  height: 100%;
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #1b1c1d;
+}
+
+.ui.vertical.menu .item.logo > i.icon {
+  float: left;
+  margin: 0;
+}
+
+.content {
+  min-width: 1000px;
+  margin-left: 180px;
+  overflow-x: auto;
+  height: 100%;
+}
+.masthead {
+  position: relative;
+  z-index: 1;
+  margin: 1em 0;
+  padding: 2em 0em;
+  background-color: #FFFFFF;
+  box-shadow: none; 
+}
+.masthead > .container {
+  margin-left: 3em !important;
+  margin-right: 3em !important;
+  width: auto !important;
+}
+
+.main.container {
+  margin-left: 3em !important;
+  margin-right: 3em !important;
+  width: auto !important;
+}
+/* page */
+.ui .page {
+  text-align: right;
+}
+.page .laypage {
+  display: inline-block;
+  height: 31px;
+}
+.page-info {
+  height: 31px;
+  line-height: 31px;
+}

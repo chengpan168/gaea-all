@@ -1,0 +1,17 @@
+<div class="content" id="content">
+    <div class="ui masthead">
+        <div class="ui container">
+            <h1 class="ui header" id="contentHeader">Gea 权限平台</h1>
+        </div>
+    </div>
+    <div class="main ui container">
+        <div class="ui form">
+            <p>
+                你没有权限访问此页面, 请联系管理员, 或上级开通权限, 谢谢
+            </p>
+
+            <a href="/login.htm">返回登录页面</a>
+            <a href="$!{appUrl}">返回应用首页</a>
+        </div>
+    </div>
+</div>

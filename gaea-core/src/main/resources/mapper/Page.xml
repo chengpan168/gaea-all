@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Page">
+
+        <sql id="header">
+            <!--<if test="start != null and end != null">
+                <![CDATA[
+                          select p.* from
+                             (
+                ]]>
+            </if>-->
+        </sql>
+
+        <sql id="footer">
+            <if test="startRow != null and pageSize != null">
+                    limit ${startRow} , ${pageSize}
+            </if>
+        </sql>
+</mapper>

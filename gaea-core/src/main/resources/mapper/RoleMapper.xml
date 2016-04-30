@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gaea.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.gaea.entity.Role">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="app_id" property="appId" jdbcType="BIGINT"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="creator_id" property="creatorId" jdbcType="BIGINT"/>
+        <result column="path" property="path" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="RoleDto" type="com.gaea.dto.RoleDto" extends="BaseResultMap">
+        <result column="app_name" property="appName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, name, app_id, parent_id, creator_id, status, path, create_time, modify_time
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from role
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.gaea.entity.Role">
+    insert into role (id, name, app_id, 
+      parent_id, creator_id, path, status,
+      create_time, modify_time)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{appId,jdbcType=BIGINT}, 
+      #{parentId,jdbcType=BIGINT}, #{creatorId,jdbcType=BIGINT}, #{path,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.gaea.entity.Role">
+        insert into role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="appId != null">
+                app_id,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="creatorId != null">
+                creator_id,
+            </if>
+            <if test="path != null">
+                path,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="appId != null">
+                #{appId,jdbcType=BIGINT},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="creatorId != null">
+                #{creatorId,jdbcType=BIGINT},
+            </if>
+            <if test="path != null">
+                #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.gaea.entity.Role">
+        update role
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="appId != null">
+                app_id = #{appId,jdbcType=BIGINT},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="creatorId != null">
+                creator_id = #{creatorId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                path = #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.gaea.entity.Role">
+        update role
+        set name = #{name,jdbcType=VARCHAR},
+          app_id = #{appId,jdbcType=BIGINT},
+          parent_id = #{parentId,jdbcType=BIGINT},
+          creator_id = #{creatorId,jdbcType=BIGINT},
+          path = #{path,jdbcType=VARCHAR},
+          status = #{status,jdbcType=VARCHAR},
+          create_time = #{createTime,jdbcType=TIMESTAMP},
+          modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="listByStaffId" resultType="string" parameterType="com.gaea.mapper.query.RoleQuery">
+        select r2.name
+            from user_role ur
+            left join role r1 on ur.role_id = r1.id
+            left join role r2 on r1.id = r2.id or r2.path like concat('%/', r1.id ,'/%')
+          where ur.staff_id = #{staffId,jdbcType=BIGINT}
+            and r2.status = 'enabled'
+    </select>
+
+    <select id="listAllRole" parameterType="string" resultType="string">
+        select  distinct(r.name) from role r
+        where r.app_id = (
+            select id from app where name = #{appName, jdbcType=VARCHAR}
+        )
+    </select>
+
+    <select id="listByPage" resultMap="RoleDto">
+        <include refid="Page.header" />
+        select r.id, r.name, r.app_id, a.name as app_name, r.path ,
+          r.status, r.modify_time, r.create_time
+        from role r
+          left join app a on r.app_id = a.id
+        where 1=1
+        <if test="status != null and status !=''">
+            and r.status = #{status}
+        </if>
+        <if test="appId != null and appId !=''">
+            and r.app_id = #{appId}
+        </if>
+        order by r.path, r.id desc
+        <include refid="Page.footer" />
+    </select>
+
+    <select id="countByPage" resultType="int">
+        select count(1)
+        from role r
+        where 1=1
+        <if test="status != null and status !=''">
+            and r.status = #{status}
+        </if>
+        <if test="appId != null and appId !=''">
+            and r.app_id = #{appId}
+        </if>
+    </select>
+
+    <select id="listRole" resultMap="BaseResultMap">
+        select r.id, r.name
+        from role r
+        where 1=1
+        <if test="status != null and status !=''">
+            and r.status = #{status}
+        </if>
+        <if test="appId != null and appId !=''">
+            and r.app_id = #{appId}
+        </if>
+        order by r.id asc
+    </select>
+
+    <select id="listRoleByIds" resultMap="BaseResultMap">
+        select r.id, r.name
+        from role r
+        where r.id in
+        <foreach collection="list" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+
+    </select>
+</mapper>

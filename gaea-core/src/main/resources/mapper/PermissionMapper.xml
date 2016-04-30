@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gaea.mapper.PermissionMapper">
+    <resultMap id="BaseResultMap" type="com.gaea.entity.Permission">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="app_id" property="appId" jdbcType="BIGINT"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="url_pattern" property="urlPattern" jdbcType="VARCHAR"/>
+        <result column="creator_id" property="creatorId" jdbcType="BIGINT"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="PermissionDto" type="com.gaea.dto.PermissionDto" extends="BaseResultMap">
+        <result column="app_name" property="appName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, app_id, description, url_pattern, creator_id, status, create_time, modify_time
+      </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from permission
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from permission
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.gaea.entity.Permission">
+    insert into permission (id, name, app_id, description, url_pattern,
+      creator_id, status, create_time, 
+      modify_time)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{appId,jdbcType=BIGINT},
+      #{description,jdbcType=VARCHAR}, #{urlPattern,jdbcType=VARCHAR},
+      #{creatorId,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.gaea.entity.Permission">
+        insert into permission
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="appId != null">
+                app_id,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="urlPattern != null">
+                url_pattern,
+            </if>
+            <if test="creatorId != null">
+                creator_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="appId != null">
+                #{appId,jdbcType=BIGINT},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="urlPattern != null">
+                #{urlPattern,jdbcType=VARCHAR},
+            </if>
+            <if test="creatorId != null">
+                #{creatorId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.gaea.entity.Permission">
+        update permission
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="appId != null">
+                app_id = #{appId,jdbcType=BIGINT},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="urlPattern != null">
+                url_pattern = #{urlPattern,jdbcType=VARCHAR},
+            </if>
+            <if test="creatorId != null">
+                creator_id = #{creatorId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.gaea.entity.Permission">
+    update permission
+    set name = #{name,jdbcType=VARCHAR},
+      app_id = #{appId,jdbcType=BIGINT},
+      description = #{description,jdbcType=VARCHAR},
+      url_pattern = #{urlPattern,jdbcType=VARCHAR},
+      creator_id = #{creatorId,jdbcType=BIGINT},
+      status = #{status,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="listByStaffId" resultType="string" parameterType="com.gaea.mapper.query.PermissionQuery">
+        select  DISTINCT(p.name)
+        from permission p
+        left join role_permission rp on p.id = rp.permission_id
+        where
+        p.status='enabled'
+        and rp.role_id in (
+            select r2.id
+            from user_role ur
+            left join role r1 on ur.role_id = r1.id
+            left join role r2 on r1.id = r2.id or r2.path like concat('%/', r1.id ,'/%')
+          where ur.staff_id = #{staffId,jdbcType=BIGINT}
+            and r2.status = 'enabled'
+        )
+    </select>
+
+    <select id="listByPage" resultMap="PermissionDto">
+        <include refid="Page.header"/>
+        select p.id, p.name, p.app_id, a.name as app_name,
+          p.description, p.url_pattern, p.status,
+          p.modify_time, p.create_time
+        from permission p
+          left join app a on p.app_id = a.id
+        where 1=1
+        <if test="appId != null and appId !=''">
+            and p.app_id = #{appId}
+        </if>
+        order by p.id desc
+        <include refid="Page.footer"/>
+    </select>
+
+    <select id="countByPage" resultType="int">
+        select count(1)
+        from permission p
+        where 1=1
+        <if test="appId != null and appId !=''">
+            and p.app_id = #{appId}
+        </if>
+    </select>
+    
+    <select id="listUrlPatternByStaffId" resultType="string"  parameterType="com.gaea.mapper.query.PermissionQuery">
+        select
+            DISTINCT(p.url_pattern)
+            from permission p
+            left join role_permission rp on p.id = rp.permission_id
+        where
+            p.status='enabled'
+            and rp.role_id in (
+                select r2.id
+                    from user_role ur
+                    left join role r1 on ur.role_id = r1.id
+                    left join role r2 on r1.id = r2.id or r2.path like concat('%/', r1.id ,'/%')
+                where ur.staff_id = #{staffId,jdbcType=BIGINT}
+                    and r2.status = 'enabled'
+            )
+    </select>
+</mapper>

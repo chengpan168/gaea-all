@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tools>
+    <toolbox scope="request" xhtml="true">
+        <!--<tool key="toytool" class="ToyTool" restrictTo="index.vm"/>-->
+        <!--<tool key="custom" class="org.mine.CustomTool" randomProperty="whatever"/>-->
+    </toolbox>
+    <toolbox scope="session">
+        <property name="create-session" value="true" type="boolean"/>
+        <tool key="map" class="java.util.HashMap"/>
+    </toolbox>
+    <toolbox scope="application">
+        <tool key="dateTool" class="org.apache.velocity.tools.generic.DateTool" format="yyyy-MM-dd HH:mm:ss"/>
+        <tool key="stringUtils" class="org.apache.commons.lang3.StringUtils"/>
+        <tool key="collectionUtils" class="org.apache.commons.collections.CollectionUtils"/>
+        <tool key="xUserSession" class="com.gaea.common.web.xuser.XUserSession"/>
+    </toolbox>
+    <data type="number" key="version" value="1.0.0-SNAPSHOT"/>
+</tools>

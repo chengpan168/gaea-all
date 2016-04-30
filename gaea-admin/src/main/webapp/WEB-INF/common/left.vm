@@ -1,0 +1,29 @@
+<div class="sidebar">
+    <div class="ui vertical inverted sticky menu top" style="width: 180px;">
+        <div class="item logo">
+            <i class="huge pied piper alternate icon"></i>
+            <h3>Gaea</h3>
+        </div>
+        <div class="item">
+            <div class="header">用户管理</div>
+            <div class="menu">
+                <a class="item" href="/user/list.htm"> 用户列表 </a>
+            </div>
+        </div>
+        <div class="item">
+            <div class="header">应用管理</div>
+            <div class="menu">
+                <a class="item" href="/app/list.htm"> 应用列表 </a>
+            </div>
+        </div>
+        <div class="item">
+            <div class="header">权限管理</div>
+            <div class="menu">
+                <a class="item" href="/role/list.htm"> 角色列表 </a>
+            </div>
+            <div class="menu">
+                <a class="item" href="/permission/list.htm"> 权限列表 </a>
+            </div>
+        </div>
+    </div>
+</div>

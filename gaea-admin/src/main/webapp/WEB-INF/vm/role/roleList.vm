@@ -1,0 +1,114 @@
+
+<script src="/assets/plugin/laypage/laypage.js"></script>
+<title>角色列表</title>
+<div class="content">
+    <div class="ui masthead">
+        <div class="ui container">
+            <h1 class="ui header"> 角色列表 </h1>
+        </div>
+    </div>
+    <div class="main ui container">
+        <div class="ui form">
+            <div class="inline fields">
+                <label>状态</label>
+                <div class="field">
+                    <div class="ui selection dropdown">
+                        <input type="hidden" id="status"/>
+                        <i class="dropdown icon"></i>
+                        <div class="text">全部</div>
+                        <div class="menu">
+                            <div class="item" data-value="">全部</div>
+                            #foreach( $status in $roleStatus)
+                                <div class="item" data-value="$status.code">$status.name</div>
+                            #end
+                        </div>
+                    </div>
+                </div>
+                <label>应用</label>
+                <div class="field">
+                    <div class="ui selection dropdown">
+                        <input type="hidden" id="appId" />
+                        <i class="dropdown icon"></i>
+                        <div class="text">全部</div>
+                        <div class="menu">
+                            <div class="item" data-value="">全部</div>
+                            #foreach( $app in $apps)
+                                <div class="item" data-value="$app.id">$app.name</div>
+                            #end
+                        </div>
+                    </div>
+                </div>
+                <div class="right floated one wide column">
+                    <button class="ui icon button" id="searchBtn"><i class="icon search"></i> 查询</button>
+                    <button class="ui primary icon button" id="toAddBtn"><i class="icon plus"></i> 添加角色</button>
+                </div>
+
+            </div>
+        </div>
+        <table class="ui compact table" id="roleTable">
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>应用名称</th>
+                    <th>父角色路径</th>
+                    <th>状态</th>
+                    <th class="center aligned">操作</th>
+                </tr>
+                <tbody>
+                </tbody>
+            </thead>
+        </table>
+        <div class="ui grid" id="rolePage">
+        </div>
+    </div>
+</div>
+<script>
+    $('.ui.dropdown').dropdown();
+    function refreshPage(currentPage) {
+        $.getJSON('/role/list.json', {
+            currentPage: currentPage || 1,
+            pageSize: 10,
+            appId: $('#appId').val(),
+            status: $('#status').val(),
+        }, function(res){
+            var data = res.data;
+            $('#rolePageDesc').text(''.format())
+            var html = '';
+            var template = '<tr class="classStatus"><td>{name}</td><td>{appName}</td><td>{pathName}</td><td>{statusName}</td>' +
+                    '<td class="center aligned"><button class="ui mini button" name="editBtn" data-url="/role/edit.htm?id={id}">编辑</button></td></tr>';
+            $.each(data.data, function() {
+                var role = this;
+                role.classStatus = role.status == 'enabled' ? '' : 'warning';
+                html += template.format(role);
+            });
+            $('#roleTable tbody').html(html);
+            //显示分页
+            laypage({
+                cont: 'rolePage', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+                pages: data.totalPage, //通过后台拿到的总页数
+                pageSize: data.pageSize,
+                totalCount: data.totalCount,
+                curr: currentPage || 1, //当前页
+                jump: function(obj, first){ //触发分页后的回调
+                    if(!first){
+                        refreshPage(obj.curr);
+                    }
+                }
+            });
+        });
+    }
+    refreshPage();
+    $('#searchBtn').on('click', function() {
+        refreshPage();
+    });
+
+    $(document).on('click', '[name="editBtn"]', function() {
+        location.href = $(this).attr('data-url');
+    });
+
+    $('#toAddBtn').on('click', function() {
+        location.href = '/role/add.htm'
+    });
+
+
+</script>

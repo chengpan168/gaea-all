@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <group>
+        <property name="base.domain" defaultValue="dianyadian.net" desc="根域名"/>
+
+        <!--<property name="redis.ip" defaultValue="121.40.157.123" desc="redisip"/>-->
+    </group>
+
+    <script>
+        <generate template="gaea-common.properties" charset="UTF-8" outputCharset="UTF-8"/>
+    </script>
+</config>

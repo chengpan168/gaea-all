@@ -1,0 +1,100 @@
+
+<script src="/assets/plugin/laypage/laypage.js"></script>
+<title>用户列表</title>
+<div class="content">
+    <div class="ui masthead">
+        <div class="ui container">
+            <h1 class="ui header"> 用户列表 </h1>
+        </div>
+    </div>
+    <div class="main ui container">
+        <div class="ui form">
+            <div class="inline fields">
+                <label>姓名</label>
+                <div class="field">
+                    <input type="text" id="name" />
+                </div>
+                <label>工号</label>
+                <div class="field">
+                    <input type="text" id="staffId" />
+                </div>
+                <div class="field">
+                    <button class="ui icon button" id="searchBtn"><i class="icon search"></i> 查询</button>
+                    <button class="ui primary icon button" id="toAddBtn"><i class="icon plus"></i> 添加用户</button>
+                </div>
+            </div>
+        </div>
+        <table class="ui compact table" id="userTable">
+            <thead>
+                <tr>
+                    <th>工号</th>
+                    <th>姓名</th>
+                    <th>手机号</th>
+                    <th>状态</th>
+                    <th>职位</th>
+                    <th class="center aligned">操作</th>
+                </tr>
+                <tbody>
+                </tbody>
+            </thead>
+        </table>
+        <div class="ui grid" id="userPage">
+        </div>
+    </div>
+</div>
+<script>
+
+    function refreshPage(currentPage) {
+        $.getJSON('/user/list.json', {
+            currentPage: currentPage || 1,
+            pageSize: 10,
+            name: $.trim($('#name').val()),
+            staffId: $.trim($('#staffId').val()),
+        }, function(res){
+            var data = res.data;
+            $('#userPageDesc').text(''.format())
+            var html = '';
+            var template = '<tr class="{classStatus}"><td>{staffId}</td><td>{name}</td><td>{phone}</td><td>{statusName}</td><td>{position}</td>' +
+                    '<td class="center aligned"><button class="ui mini button" name="editBtn" data-url="/user/edit.htm?id={id}">编辑</button></td></tr>';
+            $.each(data.data, function() {
+                var user = this;
+                user.position = user.position || '-';
+                user.phone = user.phone || '-';
+                user.classStatus = user.status == 'holiday' ? 'warning' : user.status == 'dimission' ? 'negative' : '';
+                html += template.format(user);
+            });
+            $('#userTable tbody').html(html);
+            //显示分页
+            laypage({
+                cont: 'userPage', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+                pages: data.totalPage, //通过后台拿到的总页数
+                pageSize: data.pageSize,
+                totalCount: data.totalCount,
+                curr: currentPage || 1, //当前页
+                jump: function(obj, first){ //触发分页后的回调
+                    if(!first){
+                        refreshPage(obj.curr);
+                    }
+                }
+            });
+        });
+    }
+    refreshPage();
+    $('#searchBtn').on('click', function() {
+        refreshPage();
+    });
+
+    $(document).on('click', '[name="editBtn"]', function() {
+        location.href = $(this).attr('data-url');
+    }).on('keypress', function(e) {
+        if(e.which == 13) {
+            refreshPage();
+        }
+    });
+
+    $('#toAddBtn').on('click', function() {
+        location.href = '/user/add.htm'
+    })
+
+
+</script>
